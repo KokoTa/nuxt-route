@@ -1,22 +1,29 @@
+const querystring = require('querystring')
+
+// * 注意这里 state 是函数，其他都是对象
 export const state = () => ({
-  user: ''
+  token: ''
 })
 
 export const mutations = {
-  SET_USER(state, user) {
-    state.user = user
+  SET_TOKEN(state, token) {
+    state.token = token
   }
 }
 
 export const actions = {
   // * 首先走后端逻辑，然后进入 Nuxt 逻辑，在 Nuxt 实例创建前会触发 nuxtServerInit
   // * 该方法是其他页面渲染前最先触发的钩子，执行完毕后开始执行中间件
-  // * nuxtServerInit 检查请求是否有 session 信息，有就允许访问并同步状态到其他页
-  // * 中间件用来确定是否有权访问页面，没有权限就会进行重定向
+  // * nuxtServerInit 验证 token 有效性(异步请求第三方或者其他方法)，有效就同步状态，无效就不赋值
+  // * 中间件用来检查状态是否有token，没有就会进行重定向
   nuxtServerInit({ commit }, { req }) {
-    if (req.session && req.session.user) {
-      const user = req.session.user
-      commit('SET_USER', user)
+    let token = null
+    if (req.headers.cookie) {
+      const token = querystring.parse(req.headers.cookie).token
+      if (token) {
+        // 这里进行 token 第三方验证或其他方法
+        commit('SET_TOKEN', token)
+      }
     }
   }
 }

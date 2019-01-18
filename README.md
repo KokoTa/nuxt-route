@@ -1,23 +1,9 @@
-# nuxt-route
+# 路由鉴权 - 第三方jwt
 
-> My prime Nuxt.js project
+## 注意
 
-## Build Setup
+该项目中 Session 和 Jwt 两者存放的位置都是 Cookie，当然 Jwt 也可以放在其他地方
 
-``` bash
-# install dependencies
-$ npm install
+由于是使用第三方的 token，所以我们的后端不需要验证，只需要同步状态和设置中间件即可
 
-# serve with hot reload at localhost:3000
-$ npm run dev
-
-# build for production and launch server
-$ npm run build
-$ npm start
-
-# generate static project
-$ npm run generate
-```
-
-For detailed explanation on how things work, checkout [Nuxt.js docs](https://nuxtjs.org).
-
+相比于 Session 会比较方便

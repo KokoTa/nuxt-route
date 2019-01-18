@@ -9,12 +9,6 @@
         My prime Nuxt.js project
       </h2>
       <div class="links">
-        <input
-          v-model="username"
-          type="text">
-        <input
-          v-model="password"
-          type="text">
         <button
           href="https://nuxtjs.org/"
           class="button--green"
@@ -31,44 +25,25 @@
 <script>
 import Logo from '~/components/Logo.vue'
 import { mapMutations } from 'vuex'
+const Cookie = process.client ? require('js-cookie') : null
 
 export default {
   components: {
     Logo
   },
-  data() {
-    return {
-      username: '',
-      password: ''
-    }
-  },
   // * 设置登录和登出，并同步状态树(这里不同步状态也可以正常跳转，这里同步状态树是为了让当前页面知道登录成功了)
   methods: {
-    ...mapMutations(['SET_USER']),
+    ...mapMutations(['SET_TOKEN']),
     login() {
-      const username = this.username
-      const password = this.password
-      this.$axios
-        .$post('/api/login', {
-          username,
-          password
-        })
-        .then(res => {
-          this.SET_USER(res.user)
-        })
-        .catch(err => {
-          console.error(err)
-        })
+      const token = 'fuckingTokenIsHere' // * 这个 token 是从第三方登录获取的
+      Cookie.set('token', token) // * 设置到 cookie 里
+      this.SET_TOKEN(token) // * 同步状态树
+      this.$router.go(0) // * 重新渲染该页面，此时会重新请求，新的 cookie 会传到后端
     },
     loginout() {
-      this.$axios
-        .$post('/api/loginout')
-        .then(res => {
-          this.SET_USER('')
-        })
-        .catch(err => {
-          console.error(err)
-        })
+      Cookie.remove('token')
+      this.SET_TOKEN('')
+      // 这里看是要重定向或是做其他操作
     }
   }
 }
